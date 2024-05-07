@@ -11,7 +11,7 @@ class PhoneController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
         // Get all phones from the database
         $phones = Phone::all();
@@ -112,24 +112,36 @@ class PhoneController extends Controller
      */
     public function destroy($id): Response
     {
-        // Find the phone by ID
-        $phone = Phone::find($id);
-
-        // If the phone is not found, return a 404 error response
-        if (!$phone) {
+        try {
+            // Find the phone by ID
+            $phone = Phone::find($id);
+    
+            // If the phone is not found, return a 404 error response
+            if (!$phone) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Phone not found'
+                ], 404);
+            }
+    
+            // Delete the phone
+            $phone->delete();
+    
+            // Return a success response
+            return response()->json([
+                'status' => true,
+                'message' => 'Phone deleted successfully'
+            ], 200);
+        } catch (Exception $e) {
+            // Log the error (adjust logging to your setup)
+            error_log($e->getMessage());
+    
+            // Return a server error response
             return response()->json([
                 'status' => false,
-                'message' => 'Phone not found'
-            ], 404);
+                'message' => 'Internal server error'
+            ], 500);
         }
-
-        // Delete the phone
-        $phone->delete();
-
-        // Return a success response
-        return response()->json([
-            'status' => true,
-            'message' => 'Phone deleted successfully'
-        ], 200);
     }
+    
 }
