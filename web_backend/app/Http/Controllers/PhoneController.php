@@ -13,8 +13,8 @@ class PhoneController extends Controller
      */
     public function index()
     {
-        // Get all phones from the database
-        $phones = Phone::all();
+        // Get all phones from the database sorted by 'id' in descending order
+        $phones = Phone::orderBy('id', 'desc')->get();
         
         // Return the list of phones as JSON response
         return response()->json([
@@ -22,6 +22,7 @@ class PhoneController extends Controller
             'data' => $phones
         ], 200);
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -74,7 +75,7 @@ class PhoneController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): Response
+    public function update(Request $request, $id)
     {
         // Find the phone by ID
         $phone = Phone::find($id);
