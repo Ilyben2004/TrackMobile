@@ -41,6 +41,8 @@ class TargetLocationController extends Controller
 
         // Create a new target location using the request data
         $targetLocation = TargetLocation::create($request->all());
+        $targetLocation->load('phone');
+
 
         // Return the created target location as a JSON response
         return response()->json([
