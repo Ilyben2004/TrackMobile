@@ -24,12 +24,9 @@ class PhoneController extends Controller
     }
     
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
-        // Validate request data
         $request->validate([
             'ownerName' => 'required|string',
             'libelle' => 'required|string',
@@ -39,7 +36,6 @@ class PhoneController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Create a new phone
         $phone = Phone::create($request->all());
         
         // Return the created phone as JSON response
@@ -52,11 +48,11 @@ class PhoneController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id): Response
+    public function show($id)
     {
-        // Find the phone by ID
-        $phone = Phone::find($id);
-
+        // Find the phone by ID with its target locations
+        $phone = Phone::with('TargetLocations')->find($id);
+        
         // If the phone is not found, return a 404 error response
         if (!$phone) {
             return response()->json([
@@ -64,13 +60,18 @@ class PhoneController extends Controller
                 'message' => 'Phone not found'
             ], 404);
         }
-
-        // Return the phone as JSON response
+        
+        // Count the number of target locations
+        $targetLocationsCount = $phone->TargetLocations->count();
+        
+        // Return the phone with its target locations count as JSON response
         return response()->json([
             'status' => true,
-            'data' => $phone
+            'data' => $phone,
+            'target_locations_count' => $targetLocationsCount
         ], 200);
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -144,5 +145,23 @@ class PhoneController extends Controller
             ], 500);
         }
     }
-    
+    public function findByEmail($email)
+    {
+        // Find the phone by email
+        $phone = Phone::where('email', $email)->first();
+
+        // If the phone is not found, return a 404 error response
+        if (!$phone) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Phone not found for the provided email'
+            ], 404);
+        }
+
+        // Return the phone as JSON response
+        return response()->json([
+            'status' => true,
+            'data' => $phone
+        ], 200);
+    }
 }

@@ -25,6 +25,11 @@ class Phone extends Model
         'email',
     ];
 
+    public function TargetLocations()
+    {
+        return $this->hasMany(TargetLocation::class);
+    }
+
     // Define relationships if needed (e.g., with other models)
 
     // Example: A phone may belong to a user if there is a user_id field in the phones table
