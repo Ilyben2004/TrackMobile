@@ -28,6 +28,7 @@ Route::apiResource('/locations', PhoneLocationController::class);
 Route::apiResource('/target-locations', TargetLocationController::class);
 
 Route::get('/phones-by-email/{email}',[ PhoneController::class,'findByEmail']);
+Route::post('/target-locations/visited/{targetLocationId}',[TargetLocationController::class,'setTargetLocationVisited'] );
 
 
 

@@ -154,4 +154,31 @@ class TargetLocationController extends Controller
             'data' => $targetLocations
         ], 200);
     }
+    public function setTargetLocationVisited($targetLocationId)
+{
+    // Find the target location by ID
+    $targetLocation = TargetLocation::find($targetLocationId);
+
+    // If the target location is not found, return a 404 error response
+    if (!$targetLocation) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Target location not found'
+        ], 404);
+    }
+
+    // Update the 'visited' column to 1
+    $targetLocation->visited = 1;
+
+    // Save the changes to the database
+    $targetLocation->save();
+
+    // Return a success response
+    return response()->json([
+        'status' => true,
+        'message' => 'Target location marked as visited',
+        'data' => $targetLocation
+    ], 200);
+}
+
 }

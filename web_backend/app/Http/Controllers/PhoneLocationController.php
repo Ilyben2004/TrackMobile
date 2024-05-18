@@ -78,8 +78,7 @@ class PhoneLocationController extends Controller
     public function update(Request $request, $id)
     {
         // Find the phone location by ID
-        $phoneLocation = PhoneLocation::find($id);
-
+        $phoneLocation = PhoneLocation::where('id_phone', $id)->first();
         // If the phone location is not found, return a 404 error response
         if (!$phoneLocation) {
             return response()->json([
