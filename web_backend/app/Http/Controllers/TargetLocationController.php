@@ -37,6 +37,7 @@ class TargetLocationController extends Controller
             'phone_id' => 'required|integer|exists:phones,id',
             'longitude' => 'required|numeric',
             'latitude' => 'required|numeric',
+            'description'=>'required'
         ]);
 
         // Create a new target location using the request data
@@ -50,7 +51,6 @@ class TargetLocationController extends Controller
             'data' => $targetLocation
         ], 201);
     }
-
     /**
      * Display the specified resource.
      */

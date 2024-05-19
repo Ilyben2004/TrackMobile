@@ -8,7 +8,7 @@ class TargetLocation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['phone_id', 'longitude', 'latitude','visited'];
+    protected $fillable = ['phone_id', 'longitude', 'latitude', 'description', 'visited'];
 
     public function phone()
     {
