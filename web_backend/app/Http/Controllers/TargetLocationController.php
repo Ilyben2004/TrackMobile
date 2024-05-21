@@ -5,6 +5,7 @@ use App\Models\TargetLocation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Phone;
+use App\Models\Notification;
 
 
 
@@ -155,30 +156,38 @@ class TargetLocationController extends Controller
         ], 200);
     }
     public function setTargetLocationVisited($targetLocationId)
-{
-    // Find the target location by ID
-    $targetLocation = TargetLocation::find($targetLocationId);
-
-    // If the target location is not found, return a 404 error response
-    if (!$targetLocation) {
+    {
+        // Find the target location by ID
+        $targetLocation = TargetLocation::find($targetLocationId);
+    
+        // If the target location is not found, return a 404 error response
+        if (!$targetLocation) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Target location not found'
+            ], 404);
+        }
+    
+        // Update the 'visited' column to 1
+        $targetLocation->visited = 1;
+    
+        // Save the changes to the database
+        $targetLocation->save();
+    
+        // Get the related phone and construct the notification description
+        $phone = $targetLocation->phone;
+        $description = "The user " . $phone->ownerName . " reached the location with the description: " . $targetLocation->description;
+    
+        // Create a new notification
+        Notification::create(['description' => $description]);
+    
+        // Return a success response
         return response()->json([
-            'status' => false,
-            'message' => 'Target location not found'
-        ], 404);
+            'status' => true,
+            'message' => 'Target location marked as visited',
+            'data' => $targetLocation
+        ], 200);
     }
-
-    // Update the 'visited' column to 1
-    $targetLocation->visited = 1;
-
-    // Save the changes to the database
-    $targetLocation->save();
-
-    // Return a success response
-    return response()->json([
-        'status' => true,
-        'message' => 'Target location marked as visited',
-        'data' => $targetLocation
-    ], 200);
-}
+    
 
 }

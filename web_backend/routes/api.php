@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\PhoneLocationController;
 use App\Http\Controllers\TargetLocationController;
+use App\Http\Controllers\NotificationDataController;
+
 
 
 
@@ -26,6 +28,8 @@ Route::post('/auth/login', [UserController::class, 'loginUser']);
 Route::apiResource('/phones', PhoneController::class);
 Route::apiResource('/locations', PhoneLocationController::class);
 Route::apiResource('/target-locations', TargetLocationController::class);
+Route::get('/notifications', [NotificationDataController::class, 'index']);
+
 
 
 Route::get('/phones-by-email/{email}',[ PhoneController::class,'findByEmail']);
