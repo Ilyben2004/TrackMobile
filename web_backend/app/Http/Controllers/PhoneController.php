@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use App\Models\PhoneLocation;
 class PhoneController extends Controller
 {
     /**
@@ -26,33 +26,45 @@ class PhoneController extends Controller
 
     
     public function store(Request $request)
-    {
-        $request->validate([
-            'ownerName' => 'required|string',
-            'libelle' => 'required|string',
-            'type' => 'required|string',
-            'city' => 'required|string',
-            'phoneNumber' => 'required|string',
-            'email' => 'required|email',
-        ]);
+{
+    $request->validate([
+        'ownerName' => 'required|string',
+        'libelle' => 'required|string',
+        'type' => 'required|string',
+        'city' => 'required|string',
+        'phoneNumber' => 'required|string',
+        'email' => 'required|email',
+    ]);
 
-        $phone = Phone::create($request->all());
-        
-        // Return the created phone as JSON response
-        return response()->json([
-            'status' => true,
-            'data' => $phone
-        ], 201);
-    }
+    $phone = Phone::create($request->all());
+
+    // Create a default PhoneLocation for the newly created Phone
+    $phoneLocation = PhoneLocation::create([
+        'longitude' => 0,
+        'latitude' => 0,
+        'speed' => 0,
+        'id_phone' => $phone->id,
+    ]);
+
+    // Return the created phone as JSON response
+    return response()->json([
+        'status' => true,
+        'data' => $phone,
+        'phoneLocation' => $phoneLocation
+    ], 201);
+}
+
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        // Find the phone by ID with its target locations
-        $phone = Phone::with('TargetLocations')->find($id);
-        
+        // Find the phone by ID with its target locations where visited != 1
+        $phone = Phone::with(['targetLocations' => function ($query) {
+            $query->where('visited', '!=', 1);
+        }])->find($id);
+    
         // If the phone is not found, return a 404 error response
         if (!$phone) {
             return response()->json([
@@ -60,10 +72,10 @@ class PhoneController extends Controller
                 'message' => 'Phone not found'
             ], 404);
         }
-        
-        // Count the number of target locations
-        $targetLocationsCount = $phone->TargetLocations->count();
-        
+    
+        // Count the number of target locations where visited != 1
+        $targetLocationsCount = $phone->targetLocations->count();
+    
         // Return the phone with its target locations count as JSON response
         return response()->json([
             'status' => true,
@@ -71,6 +83,7 @@ class PhoneController extends Controller
             'target_locations_count' => $targetLocationsCount
         ], 200);
     }
+    
     
 
     /**

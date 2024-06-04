@@ -16,8 +16,10 @@ class PhoneLocationController extends Controller
         // Get all phone locations from the database sorted by 'updated_at' in descending order
         // Also, eager load the 'phone' relationship for each phone location
         $phoneLocations = PhoneLocation::orderBy('updated_at', 'desc')
-            ->with('phone') // Eager load the 'phone' relationship
-            ->get();
+        ->with('phone') // Eager load the 'phone' relationship
+        ->where('latitude', '!=', 0)
+        ->where('longitude', '!=', 0)
+        ->get();
         
         // Return the list of phone locations with phone data as JSON response
         return response()->json([

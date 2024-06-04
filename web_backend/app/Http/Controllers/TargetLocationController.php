@@ -176,7 +176,7 @@ class TargetLocationController extends Controller
     
         // Get the related phone and construct the notification description
         $phone = $targetLocation->phone;
-        $description = "The user " . $phone->ownerName . " reached the location with the description: " . $targetLocation->description;
+        $description = "The user " . $phone->ownerName . " finished tha task with the  description: " . $targetLocation->description;
     
         // Create a new notification
         Notification::create(['description' => $description]);
